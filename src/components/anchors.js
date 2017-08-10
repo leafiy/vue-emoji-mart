@@ -1,30 +1,34 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-
+// TODO: svg loader
 import * as SVGs from '../svgs'
-
-export default class Anchors extends React.Component {
-  constructor(props) {
-    super(props)
-
+export default {
+  name: 'Anchors',
+  props: {
+    categories: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    anchorClick: Function,
+    i18n: Object,
+    color: String
+  },
+  data () {
     let defaultCategory = null
-    for (let category of props.categories) {
+    for (let category of this.categories) {
       if (category.first) {
         defaultCategory = category
         break
       }
     }
-
-    this.state = {
+    return {
       selected: defaultCategory.name
     }
-  }
+  },
+  render () {
+    var { categories, anchorClick, color, i18n, selected } = this
 
-  render() {
-    var { categories, onAnchorClick, color, i18n } = this.props,
-        { selected } = this.state
-
-    return <div className='emoji-mart-anchors'>
+    return <div class='emoji-mart-anchors'>
       {categories.map((category, i) => {
         var { name, anchor } = category,
             isSelected = name == selected,
@@ -38,25 +42,15 @@ export default class Anchors extends React.Component {
           <span
             key={name}
             title={i18n.categories[name.toLowerCase()]}
-            onClick={() => onAnchorClick(category, i)}
-            className={`emoji-mart-anchor ${isSelected ? 'emoji-mart-anchor-selected' : ''}`}
+            onClick={() => anchorClick(category, i)}
+            class={{'emoji-mart-anchor': true, 'emoji-mart-anchor-selected': isSelected}}
             style={{ color: isSelected ? color : null }}
           >
             <SVGElement />
-            <span className='emoji-mart-anchor-bar' style={{ backgroundColor: color }}></span>
+            <span class='emoji-mart-anchor-bar' style={{ backgroundColor: color }}></span>
           </span>
         )
       })}
     </div>
   }
-}
-
-Anchors.propTypes = {
-  categories: PropTypes.array,
-  onAnchorClick: PropTypes.func,
-}
-
-Anchors.defaultProps = {
-  categories: [],
-  onAnchorClick: (() => {}),
 }

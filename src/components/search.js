@@ -1,50 +1,48 @@
-import React from 'react'
-import PropTypes from 'prop-types'
 import emojiIndex from '../utils/emoji-index'
 
-export default class Search extends React.Component {
-  handleChange() {
-    var { input } = this.refs,
-        value = input.value
+export default {
+  name: 'Search',
+  props: {
+    search: {
+      type: Function,
+      default() {
+        return (() => {})
+      }
+    },
+    maxResults: 75,
+    emojisToShowFilter: null,
+    i18n: Object,
+    autoFocus: false
+  },
+  methods: {
+    handleChange() {
+      var { input } = this.$refs,
+          value = input.value
 
-    this.props.onSearch(emojiIndex.search(value, {
-      emojisToShowFilter: this.props.emojisToShowFilter,
-      maxResults: this.props.maxResults,
-      include: this.props.include,
-      exclude: this.props.exclude,
-      custom: this.props.custom,
-    }))
-  }
+      this.search(emojiIndex.search(value, {
+        emojisToShowFilter: this.emojisToShowFilter,
+        maxResults: this.maxResults,
+        include: this.include,
+        exclude: this.exclude,
+        custom: this.custom,
+      }))
+    },
 
-  clear() {
-    this.refs.input.value = ''
-  }
-
+    clear() {
+      this.$refs.input.value = ''
+    }
+  },
   render() {
-    var { i18n, autoFocus } = this.props
+    var { i18n, autoFocus } = this
 
-    return <div className='emoji-mart-search'>
+    return <div class='emoji-mart-search'>
       <input
         ref='input'
         type='text'
-        onChange={this.handleChange.bind(this)}
+        onInput={this.handleChange.bind(this)}
         placeholder={i18n.search}
         autoFocus={autoFocus}
       />
     </div>
   }
-}
-
-Search.propTypes = {
-  onSearch: PropTypes.func,
-  maxResults: PropTypes.number,
-  emojisToShowFilter: PropTypes.func,
-  autoFocus: PropTypes.bool,
-}
-
-Search.defaultProps = {
-  onSearch: (() => {}),
-  maxResults: 75,
-  emojisToShowFilter: null,
-  autoFocus: false,
 }

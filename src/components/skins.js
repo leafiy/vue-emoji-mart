@@ -1,56 +1,54 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-
-export default class Skins extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      opened: false,
+export default {
+  name: 'Skins',
+  props: {
+    change: {
+      type: Function,
+      default() {
+        return (() => {})
+      }
+    },
+    skin: {
+      type: Number,
+      required: true
     }
-  }
+  },
+  data () {
+    return {
+      opened: false
+    }
+  },
+  methods: {
+    handleClick(skin) {
+      var { change } = this
 
-  handleClick(skin) {
-    var { onChange } = this.props
-
-    if (!this.state.opened) {
-      this.setState({ opened: true })
-    } else {
-      this.setState({ opened: false })
-      if (skin != this.props.skin) {
-        onChange(skin)
+      if (!this.opened) {
+        this.opened = true
+      } else {
+        this.opened = false
+        if (skin != this.skin) {
+          this.change(skin)
+        }
       }
     }
-  }
-
+  },
   render() {
-    var { skin } = this.props,
-        { opened } = this.state
+    var { skin, opened } = this
 
     return <div>
-      <div className={`emoji-mart-skin-swatches ${opened ? 'emoji-mart-skin-swatches-opened' : ''}`}>
+      <div class={{'emoji-mart-skin-swatches': true, 'emoji-mart-skin-swatches-opened': opened}}>
         {/* Use Array.prototype.fill() when it is more widely supported. */}
         {[...Array(6)].map((_, i) => {
           var skinTone = i + 1,
               selected = skinTone == skin
 
-          return <span key={`skin-tone-${skinTone}`} className={`emoji-mart-skin-swatch ${selected ? 'emoji-mart-skin-swatch-selected' : ''}`}>
+          return <span key={`skin-tone-${skinTone}`} class={{'emoji-mart-skin-swatch': true, 'emoji-mart-skin-swatch-selected': selected}}>
             <span
               onClick={() => this.handleClick(skinTone)}
-              className={`emoji-mart-skin emoji-mart-skin-tone-${skinTone}`}>
+              class={`emoji-mart-skin emoji-mart-skin-tone-${skinTone}`}>
             </span>
           </span>
         })}
       </div>
     </div>
   }
-}
-
-Skins.propTypes = {
-  onChange: PropTypes.func,
-  skin: PropTypes.number.isRequired,
-}
-
-Skins.defaultProps = {
-  onChange: (() => {}),
 }

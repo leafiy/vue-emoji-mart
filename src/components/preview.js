@@ -1,21 +1,39 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-
 import { Emoji, Skins } from '.'
 import { getData } from '../utils'
 
-export default class Preview extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { emoji: null }
-  }
+export default {
+  name: 'Preview',
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    emoji: {
+      type: String,
+      required: true
+    },
+    emojiProps: {
+      type: Object,
+      required: true
+    },
+    skin: {
+      type: Number,
+      default: Emoji.defaultProps.skin
+    },
+    skinsProps: {
+      type: Object,
+      required: true
+    }
+  },
+  data () {
+    return { emojiObj: null }
+  },
+  render(h) {
+    // FIXME: Custom emoji case infinite update loop
+    var { emojiObj, emojiProps, skinsProps, title, emoji } = this
 
-  render() {
-    var { emoji } = this.state,
-        { emojiProps, skinsProps, title, emoji: idleEmoji } = this.props
-
-    if (emoji) {
-      var emojiData = getData(emoji),
+    if (emojiObj) {
+      var emojiData = getData(emojiObj),
           { emoticons } = emojiData,
           knownEmoticons = [],
           listedEmoticons = []
@@ -27,57 +45,51 @@ export default class Preview extends React.Component {
         }
       }
 
-      return <div className='emoji-mart-preview'>
-        <div className='emoji-mart-preview-emoji'>
+      return <div class='emoji-mart-preview'>
+        <div class='emoji-mart-preview-emoji'>
           {Emoji({
-            key: emoji.id,
-            emoji: emoji,
+            key: emojiObj.id,
+            emoji: emojiObj,
             ...emojiProps,
-          })}
+          }, h)}
         </div>
 
-        <div className='emoji-mart-preview-data'>
-          <div className='emoji-mart-preview-name'>{emoji.name}</div>
-          <div className='emoji-mart-preview-shortnames'>
+        <div class='emoji-mart-preview-data'>
+          <div class='emoji-mart-preview-name'>{emojiObj.name}</div>
+          <div class='emoji-mart-preview-shortnames'>
             {emojiData.short_names.map((short_name) =>
-              <span key={short_name} className='emoji-mart-preview-shortname'>:{short_name}:</span>
+              <span key={short_name} class='emoji-mart-preview-shortname'>:{short_name}:</span>
             )}
           </div>
-          <div className='emoji-mart-preview-emoticons'>
+          <div class='emoji-mart-preview-emoticons'>
             {listedEmoticons.map((emoticon) =>
-              <span key={emoticon} className='emoji-mart-preview-emoticon'>{emoticon}</span>
+              <span key={emoticon} class='emoji-mart-preview-emoticon'>{emoticon}</span>
             )}
           </div>
         </div>
       </div>
     } else {
-      return <div className='emoji-mart-preview'>
-        <div className='emoji-mart-preview-emoji'>
-          {idleEmoji && idleEmoji.length && Emoji({
-            emoji: idleEmoji,
+      return <div class='emoji-mart-preview'>
+        <div class='emoji-mart-preview-emoji'>
+          {emoji && emoji.length && Emoji({
+            emoji: emoji,
             ...emojiProps,
-          })}
+          }, h)}
         </div>
 
-        <div className='emoji-mart-preview-data'>
-          <span className='emoji-mart-title-label'>
+        <div class='emoji-mart-preview-data'>
+          <span class='emoji-mart-title-label'>
             {title}
           </span>
         </div>
 
-        <div className='emoji-mart-preview-skins'>
+        <div class='emoji-mart-preview-skins'>
           <Skins
-            {...skinsProps}
+            skin={skinsProps.skin}
+            change={skinsProps.change}
           />
         </div>
       </div>
     }
   }
-}
-
-Preview.propTypes = {
-  title: PropTypes.string.isRequired,
-  emoji: PropTypes.string.isRequired,
-  emojiProps: PropTypes.object.isRequired,
-  skinsProps: PropTypes.object.isRequired,
 }

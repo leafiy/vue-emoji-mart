@@ -1,7 +1,5 @@
 import '../vendor/raf-polyfill'
 
-import React from 'react'
-import PropTypes from 'prop-types'
 import measureScrollbar from 'measure-scrollbar'
 import data from '../../data'
 
@@ -33,21 +31,91 @@ const I18N = {
   },
 }
 
-export default class Picker extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.i18n = deepMerge(I18N, props.i18n)
-    this.state = {
-      skin: store.get('skin') || props.skin,
-      firstRender: true,
+export default {
+  name: 'Picker',
+  props: {
+    onItemClick: {
+      type: Function,
+      default() {
+        return (() => {})
+      }
+    },
+    perLine: {
+      type: Number,
+      default: 9
+    },
+    emojiSize: {
+      type: Number,
+      default: 24
+    },
+    i18ns: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    styles: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    title: {
+      type: String,
+      default: 'Emoji Mart™'
+    },
+    emoji: {
+      type: String,
+      default: 'department_store'
+    },
+    color: {
+      type: String,
+      default: '#ae65c5'
+    },
+    set: {
+      type: String,
+      default: Emoji.defaultProps.set
+    },
+    skins: {
+      type: Number,
+      default: Emoji.defaultProps.skin
+    },
+    native: Emoji.defaultProps.native,
+    backgroundImageFn: {
+      type: Function,
+      default() {
+        return Emoji.defaultProps.backgroundImageFn
+      }
+    },
+    sheetSize: Emoji.defaultProps.sheetSize,
+    emojisToShowFilter: null,
+    include: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    exclude: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    autoFocus: false,
+    custom: {
+      type: Array,
+      default() {
+        return []
+      }
     }
-
+  },
+  data () {
+    this.i18n = deepMerge(I18N, this.i18ns)
     this.categories = []
     let allCategories = [].concat(data.categories)
 
-    if (props.custom.length > 0) {
-      CUSTOM_CATEGORY.emojis = props.custom.map(emoji => {
+    if (this.custom.length > 0) {
+      CUSTOM_CATEGORY.emojis = this.custom.map(emoji => {
         return {
           ...emoji,
           // `<Category />` expects emoji to have an `id`.
@@ -61,12 +129,12 @@ export default class Picker extends React.Component {
 
     this.hideRecent = true
 
-    if (props.include != undefined) {
+    if (this.include != undefined) {
       data.categories.sort((a, b) => {
         let aName = a.name.toLowerCase()
         let bName = b.name.toLowerCase()
 
-        if (props.include.indexOf(aName) > props.include.indexOf(bName)) {
+        if (this.include.indexOf(aName) > this.include.indexOf(bName)) {
           return 1
         }
 
@@ -75,15 +143,15 @@ export default class Picker extends React.Component {
     }
 
     for (let category of allCategories) {
-      let isIncluded = props.include && props.include.length ? props.include.indexOf(category.name.toLowerCase()) > -1 : true
-      let isExcluded = props.exclude && props.exclude.length ? props.exclude.indexOf(category.name.toLowerCase()) > -1 : false
+      let isIncluded = this.include && this.include.length ? this.include.indexOf(category.name.toLowerCase()) > -1 : true
+      let isExcluded = this.exclude && this.exclude.length ? this.exclude.indexOf(category.name.toLowerCase()) > -1 : false
       if (!isIncluded || isExcluded) { continue }
 
-      if (props.emojisToShowFilter) {
+      if (this.emojisToShowFilter) {
         let newEmojis = []
 
         for (let emoji of category.emojis) {
-          if (props.emojisToShowFilter(data.emojis[emoji] || emoji)) {
+          if (this.emojisToShowFilter(data.emojis[emoji] || emoji)) {
             newEmojis.push(emoji)
           }
         }
@@ -101,8 +169,8 @@ export default class Picker extends React.Component {
       }
     }
 
-    let includeRecent = props.include && props.include.length ? props.include.indexOf('recent') > -1 : true
-    let excludeRecent = props.exclude && props.exclude.length ? props.exclude.indexOf('recent') > -1 : false
+    let includeRecent = this.include && this.include.length ? this.include.indexOf('recent') > -1 : true
+    let excludeRecent = this.exclude && this.exclude.length ? this.exclude.indexOf('recent') > -1 : false
     if (includeRecent && !excludeRecent) {
       this.hideRecent = false
       this.categories.unshift(RECENT_CATEGORY)
@@ -111,241 +179,231 @@ export default class Picker extends React.Component {
     if (this.categories[0]) {
       this.categories[0].first = true
     }
-
     this.categories.unshift(SEARCH_CATEGORY)
-  }
 
-  componentWillReceiveProps(props) {
-    if (props.skin && !store.get('skin')) {
-      this.setState({ skin: props.skin })
+    return {
+      skin: store.get('skin') || this.skins,
+      firstRender: true
     }
-  }
-
-  componentDidMount() {
-    if (this.state.firstRender) {
+  },
+  mounted () {
+    if (this.firstRender) {
       this.testStickyPosition()
       this.firstRenderTimeout = setTimeout(() => {
-        this.setState({ firstRender: false })
+        this.firstRender = false
       }, 60)
     }
-  }
-
-  componentDidUpdate() {
-    this.updateCategoriesSize()
-    this.handleScroll()
-  }
-
-  componentWillUnmount() {
+  },
+  destoryed () {
     SEARCH_CATEGORY.emojis = null
 
     clearTimeout(this.leaveTimeout)
     clearTimeout(this.firstRenderTimeout)
-  }
+  },
+  methods: {
+    testStickyPosition() {
+      var stickyTestElement = document.createElement('div')
+      for (let prefix of ['', '-webkit-', '-ms-', '-moz-', '-o-']) {
+        stickyTestElement.style.position = `${prefix}sticky`
+      }
 
-  testStickyPosition() {
-    var stickyTestElement = document.createElement('div')
-    for (let prefix of ['', '-webkit-', '-ms-', '-moz-', '-o-']) {
-      stickyTestElement.style.position = `${prefix}sticky`
-    }
+      this.hasStickyPosition = !!stickyTestElement.style.position.length
+    },
 
-    this.hasStickyPosition = !!stickyTestElement.style.position.length
-  }
+    handleEmojiOver(emoji) {
+      var { preview } = this.$refs
+      // Use Array.prototype.find() when it is more widely supported.
+      const emojiData = CUSTOM_CATEGORY.emojis.filter(customEmoji => customEmoji.id === emoji.id)[0]
+      preview.emojiObj = Object.assign(emoji, emojiData)
+      clearTimeout(this.leaveTimeout)
+    },
 
-  handleEmojiOver(emoji) {
-    var { preview } = this.refs
-    // Use Array.prototype.find() when it is more widely supported.
-    const emojiData = CUSTOM_CATEGORY.emojis.filter(customEmoji => customEmoji.id === emoji.id)[0]
-    preview.setState({ emoji: Object.assign(emoji, emojiData) })
-    clearTimeout(this.leaveTimeout)
-  }
+    handleEmojiLeave(emoji) {
+      this.leaveTimeout = setTimeout(() => {
+        var { preview } = this.$refs
+        preview.emojiObj = null
+      }, 16)
+    },
 
-  handleEmojiLeave(emoji) {
-    this.leaveTimeout = setTimeout(() => {
-      var { preview } = this.refs
-      preview.setState({ emoji: null })
-    }, 16)
-  }
+    handleEmojiClick(emoji, e) {
+      this.onItemClick(emoji, e)
+      if (!this.hideRecent) frequently.add(emoji)
 
-  handleEmojiClick(emoji, e) {
-    this.props.onClick(emoji, e)
-    if (!this.hideRecent) frequently.add(emoji)
+      var component = this.$refs['category-1']
+      if (component) {
+        let maxMargin = component.maxMargin
+        component.$forceUpdate()
 
-    var component = this.refs['category-1']
-    if (component) {
-      let maxMargin = component.maxMargin
-      component.forceUpdate()
+        window.requestAnimationFrame(() => {
+          component.memoizeSize()
+          if (maxMargin == component.maxMargin) return
 
-      window.requestAnimationFrame(() => {
-        component.memoizeSize()
-        if (maxMargin == component.maxMargin) return
+          this.updateCategoriesSize()
+          this.handleScrollPaint()
 
-        this.updateCategoriesSize()
-        this.handleScrollPaint()
+          if (SEARCH_CATEGORY.emojis) {
+            component.updateDisplay('none')
+          }
+        })
+      }
+    },
 
-        if (SEARCH_CATEGORY.emojis) {
-          component.updateDisplay('none')
-        }
-      })
-    }
-  }
+    handleScroll() {
+      if (!this.waitingForPaint) {
+        this.waitingForPaint = true
+        window.requestAnimationFrame(this.handleScrollPaint.bind(this))
+      }
+    },
 
-  handleScroll() {
-    if (!this.waitingForPaint) {
-      this.waitingForPaint = true
-      window.requestAnimationFrame(this.handleScrollPaint.bind(this))
-    }
-  }
+    handleScrollPaint() {
+      this.waitingForPaint = false
 
-  handleScrollPaint() {
-    this.waitingForPaint = false
+      if (!this.$refs.scroll) {
+        return
+      }
 
-    if (!this.refs.scroll) {
-      return
-    }
+      let activeCategory = null
 
-    let activeCategory = null
+      if (SEARCH_CATEGORY.emojis) {
+        activeCategory = SEARCH_CATEGORY
+      } else {
+        var target = this.$refs.scroll,
+            scrollTop = target.scrollTop,
+            scrollingDown = scrollTop > (this.scrollTop || 0),
+            minTop = 0
 
-    if (SEARCH_CATEGORY.emojis) {
-      activeCategory = SEARCH_CATEGORY
-    } else {
-      var target = this.refs.scroll,
-          scrollTop = target.scrollTop,
-          scrollingDown = scrollTop > (this.scrollTop || 0),
-          minTop = 0
+        for (let i = 0, l = this.categories.length; i < l; i++) {
+          let ii = scrollingDown ? (this.categories.length - 1 - i) : i,
+              category = this.categories[ii],
+              component = this.$refs[`category-${ii}`]
 
-      for (let i = 0, l = this.categories.length; i < l; i++) {
-        let ii = scrollingDown ? (this.categories.length - 1 - i) : i,
-            category = this.categories[ii],
-            component = this.refs[`category-${ii}`]
+          if (component) {
+            let active = component.handleScroll(scrollTop)
 
-        if (component) {
-          let active = component.handleScroll(scrollTop)
+            if (!minTop || component.top < minTop) {
+              if (component.top > 0) {
+                minTop = component.top
+              }
+            }
 
-          if (!minTop || component.top < minTop) {
-            if (component.top > 0) {
-              minTop = component.top
+            if (active && !activeCategory) {
+              activeCategory = category
             }
           }
+        }
 
-          if (active && !activeCategory) {
+        if (scrollTop < minTop) {
+          for (let category of this.categories) {
+            if (category.anchor === false) { continue }
+
             activeCategory = category
+            break
           }
+        } else if (scrollTop + this.clientHeight >= this.scrollHeight) {
+          activeCategory = this.categories[this.categories.length - 1]
         }
       }
 
-      if (scrollTop < minTop) {
-        for (let category of this.categories) {
-          if (category.anchor === false) { continue }
+      if (activeCategory) {
+        let { anchors } = this.$refs,
+            { name: categoryName } = activeCategory
 
-          activeCategory = category
-          break
+        if (anchors.selected != categoryName) {
+          anchors.selected = categoryName
         }
-      } else if (scrollTop + this.clientHeight >= this.scrollHeight) {
-        activeCategory = this.categories[this.categories.length - 1]
       }
-    }
 
-    if (activeCategory) {
-      let { anchors } = this.refs,
-          { name: categoryName } = activeCategory
+      this.scrollTop = scrollTop
+    },
 
-      if (anchors.state.selected != categoryName) {
-        anchors.setState({ selected: categoryName })
-      }
-    }
+    handleSearch(emojis) {
+      SEARCH_CATEGORY.emojis = emojis
 
-    this.scrollTop = scrollTop
-  }
+      for (let i = 0, l = this.categories.length; i < l; i++) {
+        let component = this.$refs[`category-${i}`]
 
-  handleSearch(emojis) {
-    SEARCH_CATEGORY.emojis = emojis
-
-    for (let i = 0, l = this.categories.length; i < l; i++) {
-      let component = this.refs[`category-${i}`]
-
-      if (component && component.props.name != 'Search') {
-        let display = emojis ? 'none' : 'inherit'
-        component.updateDisplay(display)
-      }
-    }
-
-    this.forceUpdate()
-    this.refs.scroll.scrollTop = 0
-    this.handleScroll()
-  }
-
-  handleAnchorClick(category, i) {
-    var component = this.refs[`category-${i}`],
-        { scroll, anchors } = this.refs,
-        scrollToComponent = null
-
-    scrollToComponent = () => {
-      if (component) {
-        let { top } = component
-
-        if (category.first) {
-          top = 0
-        } else {
-          top += 1
+        if (component && component.name != 'Search') {
+          let display = emojis ? 'none' : 'inherit'
+          component.updateDisplay(display)
         }
-
-        scroll.scrollTop = top
       }
+
+      this.$forceUpdate()
+      this.$refs.scroll.scrollTop = 0
+      this.handleScroll()
+    },
+    // FIXME: Custom emoji category not active
+    handleAnchorClick(category, i) {
+      var component = this.$refs[`category-${i}`],
+          { scroll, anchors } = this.$refs,
+          scrollToComponent = null
+
+      scrollToComponent = () => {
+        if (component) {
+          let { top } = component
+
+          if (category.first) {
+            top = 0
+          } else {
+            top += 1
+          }
+
+          scroll.scrollTop = top
+        }
+      }
+
+      if (SEARCH_CATEGORY.emojis) {
+        this.handleSearch(null)
+        this.$refs.search.clear()
+
+        window.requestAnimationFrame(scrollToComponent)
+      } else {
+        scrollToComponent()
+      }
+    },
+
+    handleSkinChange(skin) {
+      var newState = { skin: skin }
+
+      this.skin = skin
+      store.update(newState)
+    },
+
+    updateCategoriesSize() {
+      for (let i = 0, l = this.categories.length; i < l; i++) {
+        let component = this.$refs[`category-${i}`]
+        if (component) component.memoizeSize()
+      }
+
+      if (this.refs.scroll) {
+        let target = this.$refs.scroll
+        this.scrollHeight = target.scrollHeight
+        this.clientHeight = target.clientHeight
+      }
+    },
+
+    getCategories() {
+      return this.firstRender ? this.categories.slice(0, 3) : this.categories
     }
-
-    if (SEARCH_CATEGORY.emojis) {
-      this.handleSearch(null)
-      this.refs.search.clear()
-
-      window.requestAnimationFrame(scrollToComponent)
-    } else {
-      scrollToComponent()
-    }
-  }
-
-  handleSkinChange(skin) {
-    var newState = { skin: skin }
-
-    this.setState(newState)
-    store.update(newState)
-  }
-
-  updateCategoriesSize() {
-    for (let i = 0, l = this.categories.length; i < l; i++) {
-      let component = this.refs[`category-${i}`]
-      if (component) component.memoizeSize()
-    }
-
-    if (this.refs.scroll) {
-      let target = this.refs.scroll
-      this.scrollHeight = target.scrollHeight
-      this.clientHeight = target.clientHeight
-    }
-  }
-
-  getCategories() {
-    return this.state.firstRender ? this.categories.slice(0, 3) : this.categories
-  }
-
+  },
   render() {
-    var { perLine, emojiSize, set, sheetSize, style, title, emoji, color, native, backgroundImageFn, emojisToShowFilter, include, exclude, autoFocus } = this.props,
-        { skin } = this.state,
+    var { perLine, emojiSize, skin, set, sheetSize, styles, title, emoji, color, native, backgroundImageFn, emojisToShowFilter, include, exclude, autoFocus } = this,
         width = (perLine * (emojiSize + 12)) + 12 + 2 + measureScrollbar()
 
-    return <div style={{width: width, ...style}} className='emoji-mart'>
-      <div className='emoji-mart-bar'>
+    return <div style={{width: width, ...styles}} class='emoji-mart'>
+      <div class='emoji-mart-bar'>
         <Anchors
           ref='anchors'
           i18n={this.i18n}
           color={color}
           categories={this.categories}
-          onAnchorClick={this.handleAnchorClick.bind(this)}
+          anchorClick={this.handleAnchorClick.bind(this)}
         />
       </div>
 
       <Search
         ref='search'
-        onSearch={this.handleSearch.bind(this)}
+        search={this.handleSearch.bind(this)}
         i18n={this.i18n}
         emojisToShowFilter={emojisToShowFilter}
         include={include}
@@ -353,8 +411,8 @@ export default class Picker extends React.Component {
         custom={CUSTOM_CATEGORY.emojis}
         autoFocus={autoFocus}
       />
-
-      <div ref="scroll" className='emoji-mart-scroll' onScroll={this.handleScroll.bind(this)}>
+      {/*  FIXME: Recent emoji sort desc  */}
+      <div ref="scroll" class='emoji-mart-scroll' onScroll={this.handleScroll.bind(this)}>
         {this.getCategories().map((category, i) => {
           return <Category
             ref={`category-${i}`}
@@ -374,15 +432,15 @@ export default class Picker extends React.Component {
               sheetSize: sheetSize,
               forceSize: native,
               backgroundImageFn: backgroundImageFn,
-              onOver: this.handleEmojiOver.bind(this),
-              onLeave: this.handleEmojiLeave.bind(this),
-              onClick: this.handleEmojiClick.bind(this),
+              emojiOver: this.handleEmojiOver.bind(this),
+              emojiLeave: this.handleEmojiLeave.bind(this),
+              emojiClick: this.handleEmojiClick.bind(this),
             }}
           />
         })}
       </div>
 
-      <div className='emoji-mart-bar'>
+      <div class='emoji-mart-bar'>
         <Preview
           ref='preview'
           title={title}
@@ -397,56 +455,10 @@ export default class Picker extends React.Component {
           }}
           skinsProps={{
             skin: skin,
-            onChange: this.handleSkinChange.bind(this)
+            change: this.handleSkinChange.bind(this)
           }}
         />
       </div>
     </div>
   }
-}
-
-Picker.propTypes = {
-  onClick: PropTypes.func,
-  perLine: PropTypes.number,
-  emojiSize: PropTypes.number,
-  i18n: PropTypes.object,
-  style: PropTypes.object,
-  title: PropTypes.string,
-  emoji: PropTypes.string,
-  color: PropTypes.string,
-  set: Emoji.propTypes.set,
-  skin: Emoji.propTypes.skin,
-  native: PropTypes.bool,
-  backgroundImageFn: Emoji.propTypes.backgroundImageFn,
-  sheetSize: Emoji.propTypes.sheetSize,
-  emojisToShowFilter: PropTypes.func,
-  include: PropTypes.arrayOf(PropTypes.string),
-  exclude: PropTypes.arrayOf(PropTypes.string),
-  autoFocus: PropTypes.bool,
-  custom: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    short_names: PropTypes.arrayOf(PropTypes.string).isRequired,
-    emoticons: PropTypes.arrayOf(PropTypes.string),
-    keywords: PropTypes.arrayOf(PropTypes.string),
-    imageUrl: PropTypes.string.isRequired,
-  })),
-}
-
-Picker.defaultProps = {
-  onClick: (() => {}),
-  emojiSize: 24,
-  perLine: 9,
-  i18n: {},
-  style: {},
-  title: 'Emoji Mart™',
-  emoji: 'department_store',
-  color: '#ae65c5',
-  set: Emoji.defaultProps.set,
-  skin: Emoji.defaultProps.skin,
-  native: Emoji.defaultProps.native,
-  sheetSize: Emoji.defaultProps.sheetSize,
-  backgroundImageFn: Emoji.defaultProps.backgroundImageFn,
-  emojisToShowFilter: null,
-  autoFocus: false,
-  custom: [],
 }

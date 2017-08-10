@@ -1,5 +1,3 @@
-import React from 'react'
-import PropTypes from 'prop-types'
 import data from '../../data'
 
 import { getData, getSanitizedData, unifiedToNative } from '../utils'
@@ -24,30 +22,30 @@ const _getSanitizedData = (props) => {
 }
 
 const _handleClick = (e, props) => {
-  if (!props.onClick) { return }
-  var { onClick } = props,
+  if (!props.emojiClick) { return }
+  var { emojiClick } = props,
       emoji = _getSanitizedData(props)
 
-  onClick(emoji, e)
+  emojiClick(emoji, e)
 }
 
 const _handleOver = (e, props) => {
-  if (!props.onOver) { return }
-  var { onOver } = props,
+  if (!props.emojiOver) { return }
+  var { emojiOver } = props,
       emoji = _getSanitizedData(props)
 
-  onOver(emoji, e)
+  emojiOver(emoji, e)
 }
 
 const _handleLeave = (e, props) => {
-  if (!props.onLeave) { return }
-  var { onLeave } = props,
+  if (!props.emojiLeave) { return }
+  var { emojiLeave } = props,
       emoji = _getSanitizedData(props)
 
-  onLeave(emoji, e)
+  emojiLeave(emoji, e)
 }
 
-const Emoji = (props) => {
+const Emoji = (props, h) => {
   for (let k in Emoji.defaultProps) {
     if (props[k] == undefined && Emoji.defaultProps[k] != undefined) {
       props[k] = Emoji.defaultProps[k]
@@ -96,31 +94,20 @@ const Emoji = (props) => {
     }
   }
 
-  return <span
-    key={props.emoji.id || props.emoji}
-    onClick={(e) => _handleClick(e, props)}
-    onMouseEnter={(e) => _handleOver(e, props)}
-    onMouseLeave={(e) => _handleLeave(e, props)}
-    className='emoji-mart-emoji'>
-    <span style={style}>{children}</span>
-  </span>
-}
-
-Emoji.propTypes = {
-  onOver: PropTypes.func,
-  onLeave: PropTypes.func,
-  onClick: PropTypes.func,
-  backgroundImageFn: PropTypes.func,
-  native: PropTypes.bool,
-  forceSize: PropTypes.bool,
-  skin: PropTypes.oneOf([1, 2, 3, 4, 5, 6]),
-  sheetSize: PropTypes.oneOf([16, 20, 32, 64]),
-  set: PropTypes.oneOf(['apple', 'google', 'twitter', 'emojione', 'messenger', 'facebook']),
-  size: PropTypes.number.isRequired,
-  emoji: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-  ]).isRequired,
+  return h('span', {
+    key: props.emoji.id || props.emoji,
+    class: 'emoji-mart-emoji',
+    on: {
+      click: (e) => _handleClick(e, props),
+      mouseenter: (e) => _handleOver(e, props),
+      mouseleave: (e) => _handleLeave(e, props)
+    }
+  },
+  [
+    h('span', {
+      style: style
+    }, children)
+  ])
 }
 
 Emoji.defaultProps = {

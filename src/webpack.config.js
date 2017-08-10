@@ -9,22 +9,22 @@ module.exports = {
   entry: path.resolve('src/index.js'),
   output: {
     path: path.resolve('dist'),
-    filename: 'emoji-mart.js',
-    library: 'EmojiMart',
+    filename: 'vue-emoji-mart.js',
+    library: 'VueEmojiMart',
     libraryTarget: 'umd',
   },
 
   externals: !TEST && [{
-    'react': {
-      root: 'React',
-      commonjs2: 'react',
-      commonjs: 'react',
-      amd: 'react',
+    'vue': {
+      root: 'Vue',
+      commonjs2: 'vue',
+      commonjs: 'vue',
+      amd: 'vue',
     },
   }],
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         loader: 'babel-loader',
@@ -36,16 +36,12 @@ module.exports = {
       },
       {
         test: /\.svg$/,
-        loaders: ['babel?presets[]=react', 'svg-jsx?es6=true'],
+        loader: 'vue-svg-loader',
         include: [
           path.resolve('src/svgs'),
         ],
       },
     ],
-  },
-
-  resolve: {
-    extensions: ['', '.js'],
   },
 
   plugins: [
