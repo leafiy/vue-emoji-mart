@@ -375,7 +375,7 @@ export default {
         if (component) component.memoizeSize()
       }
 
-      if (this.refs.scroll) {
+      if (this.$refs.scroll) {
         let target = this.$refs.scroll
         this.scrollHeight = target.scrollHeight
         this.clientHeight = target.clientHeight
@@ -411,7 +411,6 @@ export default {
         custom={CUSTOM_CATEGORY.emojis}
         autoFocus={autoFocus}
       />
-      {/*  FIXME: Recent emoji sort desc  */}
       <div ref="scroll" class='emoji-mart-scroll' onScroll={this.handleScroll.bind(this)}>
         {this.getCategories().map((category, i) => {
           return <Category

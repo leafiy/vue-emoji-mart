@@ -5,12 +5,18 @@ var webpack = require('webpack')
 module.exports = {
   entry: path.resolve('example/index.js'),
   output: {
-    path: path.resolve('example'),
-    filename: 'bundle.js',
+    filename: './example/bundle.js',
+    publicPath: '/'
+  },
+
+  resolve: {
+    alias: {
+      vue: 'vue/dist/vue.js'
+    }
   },
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         loader: 'babel-loader',
@@ -23,16 +29,12 @@ module.exports = {
       },
       {
         test: /\.svg$/,
-        loaders: ['babel?presets[]=react', 'svg-jsx?es6=true'],
+        loader: 'vue-svg-loader',
         include: [
           path.resolve('src/svgs'),
         ],
       },
     ],
-  },
-
-  resolve: {
-    extensions: ['', '.js'],
   },
 
   plugins: [

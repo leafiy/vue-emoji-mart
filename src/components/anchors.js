@@ -1,4 +1,3 @@
-// TODO: svg loader
 import * as SVGs from '../svgs'
 export default {
   name: 'Anchors',

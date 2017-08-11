@@ -1,5 +1,5 @@
 <div align="center">
-  <br><b>Emoji Mart</b> is a Slack-like customizable<br>emoji picker component for React
+  <br><b>Vue Emoji Mart</b> is a Slack-like customizable<br>emoji picker component for Vue, inspired by [Emoji Mart](https://github.com/missive/emoji-mart).
   <br><a href="https://missive.github.io/emoji-mart">Demo</a> • <a href="https://github.com/missive/emoji-mart/releases">Changelog</a>
   <br><img src="https://cloud.githubusercontent.com/assets/436043/17186519/9e71e8fe-5403-11e6-9314-21365c56a601.png">
   <br><a title="Team email, team chat, team tasks, one app" href="https://missiveapp.com"><img alt="Missive | Team email, team chat, team tasks, one app" src="https://cloud.githubusercontent.com/assets/436043/17186909/17f9cede-5405-11e6-988a-a7c2380af396.png"></a>
@@ -8,12 +8,12 @@
 
 ## Installation
 
-`npm install --save emoji-mart`
+`npm install --save vue-emoji-mart`
 
 ## Components
 ### Picker
 ```jsx
-import { Picker } from 'emoji-mart'
+import { Picker } from 'vue-emoji-mart'
 
 <Picker set='emojione' />
 <Picker onClick={this.addEmoji} />
@@ -123,7 +123,7 @@ Sheets are served from [unpkg](https://unpkg.com), a global CDN that serves file
 
 ### Emoji
 ```jsx
-import { Emoji } from 'emoji-mart'
+import { Emoji } from 'vue-emoji-mart'
 
 <Emoji emoji={{ id: 'santa', skin: 3 }} />
 <Emoji emoji=':santa::skin-tone-3:' />
@@ -147,7 +147,7 @@ import { Emoji } from 'emoji-mart'
 You can provide custom emojis which will show up in their own category.
 
 ```js
-import { Picker } from 'emoji-mart'
+import { Picker } from 'vue-emoji-mart'
 
 const customEmojis = [
   {
@@ -167,7 +167,7 @@ const customEmojis = [
 The `Picker` doesn’t have to be mounted for you to take advantage of the advanced search results.
 
 ```js
-import { emojiIndex } from 'emoji-mart'
+import { emojiIndex } from 'vue-emoji-mart'
 
 emojiIndex.search('christmas').map((o) => o.native)
 // => [🎄, 🎅🏼, 🔔, 🎁, ⛄️, ❄️]
