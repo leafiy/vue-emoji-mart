@@ -194,6 +194,14 @@ export default {
       }, 60)
     }
   },
+  watch: {
+    'firstRender': function(val, oldVal) {
+      this.$nextTick(function() {
+        this.updateCategoriesSize()
+        this.handleScroll()
+      });
+    }
+  },
   destoryed () {
     SEARCH_CATEGORY.emojis = null
 
@@ -332,7 +340,6 @@ export default {
       this.$refs.scroll.scrollTop = 0
       this.handleScroll()
     },
-    // FIXME: Custom emoji category not active
     handleAnchorClick(category, i) {
       var component = this.$refs[`category-${i}`],
           { scroll, anchors } = this.$refs,

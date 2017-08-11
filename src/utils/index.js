@@ -71,7 +71,7 @@ function getData(emoji, skin, set) {
       emojiData = data.emojis[emoji]
     }
   } else if (emoji.custom) {
-    let tmp = {}
+    var tmp = {}
 
     tmp.search = buildSearch({
       short_names: emoji.short_names,
