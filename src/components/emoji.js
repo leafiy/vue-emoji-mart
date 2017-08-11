@@ -1,5 +1,3 @@
-import data from '../../data'
-
 import { getData, getSanitizedData, unifiedToNative } from '../utils'
 
 const SHEET_COLUMNS = 49

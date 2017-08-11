@@ -21,7 +21,11 @@ emojiData.sort((a, b) => {
   return aTest - bTest
 })
 
-emojiData.forEach((datum) => {
+emojiData.filter((datum) => {
+  if (!datum.added_in) return true
+  let [major, minor] = datum.added_in.split('.')
+  return Number(major) <= 6
+}).forEach((datum) => {
   var category = datum.category,
       keywords = [],
       categoryIndex
@@ -79,11 +83,20 @@ emojiData.forEach((datum) => {
   delete datum.short_name
   delete datum.category
   delete datum.sort_order
+  delete datum.added_in
+  // Really big.
+  delete datum.skin_variations
+  // Not needed for native emoji.
+  delete datum.sheet_x
+  delete datum.sheet_y
 
   for (let key in datum) {
     let value = datum[key]
 
     if (Array.isArray(value) && !value.length) {
+      delete datum[key]
+    }
+    if (key.startsWith('has_img')) {
       delete datum[key]
     }
   }
@@ -97,6 +110,9 @@ mkdirp('data', (err) => {
 
   const stringifiedData = JSON.stringify(data).replace(/\"([A-Za-z_]+)\":/g, '$1:')
   fs.writeFile('data/index.js', `export default ${stringifiedData}`, (err) => {
+    if (err) throw err
+  })
+  fs.writeFile('data/emoji.json', JSON.stringify(data), (err) => {
     if (err) throw err
   })
 })

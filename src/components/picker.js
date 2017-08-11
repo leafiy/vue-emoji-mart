@@ -5,7 +5,7 @@ import data from '../../data'
 
 import store from '../utils/store'
 import frequently from '../utils/frequently'
-import { deepMerge } from '../utils'
+import { deepMerge, loadEmojiData } from '../utils'
 
 import { Anchors, Category, Emoji, Preview, Search } from '.'
 
@@ -80,14 +80,20 @@ export default {
       type: Number,
       default: Emoji.defaultProps.skin
     },
-    native: Emoji.defaultProps.native,
+    native: {
+      type: Boolean,
+      default: Emoji.defaultProps.native
+    },
     backgroundImageFn: {
       type: Function,
       default() {
         return Emoji.defaultProps.backgroundImageFn
       }
     },
-    sheetSize: Emoji.defaultProps.sheetSize,
+    sheetSize: {
+      type: Number,
+      default: Emoji.defaultProps.sheetSize
+    },
     emojisToShowFilter: null,
     include: {
       type: Array,
@@ -101,90 +107,30 @@ export default {
         return []
       }
     },
-    autoFocus: false,
+    autoFocus: {
+      type: Boolean,
+      default: false
+    },
     custom: {
       type: Array,
       default() {
         return []
       }
+    },
+    enableSkins: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
-    this.i18n = deepMerge(I18N, this.i18ns)
-    this.categories = []
-    let allCategories = [].concat(data.categories)
-
-    if (this.custom.length > 0) {
-      CUSTOM_CATEGORY.emojis = this.custom.map(emoji => {
-        return {
-          ...emoji,
-          // `<Category />` expects emoji to have an `id`.
-          id: emoji.short_names[0],
-          custom: true,
-        }
-      })
-
-      allCategories.push(CUSTOM_CATEGORY)
-    }
-
-    this.hideRecent = true
-
-    if (this.include != undefined) {
-      data.categories.sort((a, b) => {
-        let aName = a.name.toLowerCase()
-        let bName = b.name.toLowerCase()
-
-        if (this.include.indexOf(aName) > this.include.indexOf(bName)) {
-          return 1
-        }
-
-        return 0
-      })
-    }
-
-    for (let category of allCategories) {
-      let isIncluded = this.include && this.include.length ? this.include.indexOf(category.name.toLowerCase()) > -1 : true
-      let isExcluded = this.exclude && this.exclude.length ? this.exclude.indexOf(category.name.toLowerCase()) > -1 : false
-      if (!isIncluded || isExcluded) { continue }
-
-      if (this.emojisToShowFilter) {
-        let newEmojis = []
-
-        for (let emoji of category.emojis) {
-          if (this.emojisToShowFilter(data.emojis[emoji] || emoji)) {
-            newEmojis.push(emoji)
-          }
-        }
-
-        if (newEmojis.length) {
-          let newCategory = {
-            emojis: newEmojis,
-            name: category.name,
-          }
-
-          this.categories.push(newCategory)
-        }
-      } else {
-        this.categories.push(category)
-      }
-    }
-
-    let includeRecent = this.include && this.include.length ? this.include.indexOf('recent') > -1 : true
-    let excludeRecent = this.exclude && this.exclude.length ? this.exclude.indexOf('recent') > -1 : false
-    if (includeRecent && !excludeRecent) {
-      this.hideRecent = false
-      this.categories.unshift(RECENT_CATEGORY)
-    }
-
-    if (this.categories[0]) {
-      this.categories[0].first = true
-    }
-    this.categories.unshift(SEARCH_CATEGORY)
-
     return {
       skin: store.get('skin') || this.skins,
       firstRender: true
     }
+  },
+  created () {
+    this.i18n = deepMerge(I18N, this.i18ns)
+    this.processData()
   },
   mounted () {
     if (this.firstRender) {
@@ -209,6 +155,77 @@ export default {
     clearTimeout(this.firstRenderTimeout)
   },
   methods: {
+    processData() {
+      this.categories = []
+      let allCategories = [].concat(data.categories)
+
+      if (this.custom.length > 0) {
+        CUSTOM_CATEGORY.emojis = this.custom.map(emoji => {
+          return {
+            ...emoji,
+            // `<Category />` expects emoji to have an `id`.
+            id: emoji.short_names[0],
+            custom: true,
+          }
+        })
+
+        allCategories.push(CUSTOM_CATEGORY)
+      }
+
+      this.hideRecent = true
+
+      if (this.include != undefined) {
+        data.categories.sort((a, b) => {
+          let aName = a.name.toLowerCase()
+          let bName = b.name.toLowerCase()
+
+          if (this.include.indexOf(aName) > this.include.indexOf(bName)) {
+            return 1
+          }
+
+          return 0
+        })
+      }
+
+      for (let category of allCategories) {
+        let isIncluded = this.include && this.include.length ? this.include.indexOf(category.name.toLowerCase()) > -1 : true
+        let isExcluded = this.exclude && this.exclude.length ? this.exclude.indexOf(category.name.toLowerCase()) > -1 : false
+        if (!isIncluded || isExcluded) { continue }
+
+        if (this.emojisToShowFilter) {
+          let newEmojis = []
+
+          for (let emoji of category.emojis) {
+            if (this.emojisToShowFilter(data.emojis[emoji] || emoji)) {
+              newEmojis.push(emoji)
+            }
+          }
+
+          if (newEmojis.length) {
+            let newCategory = {
+              emojis: newEmojis,
+              name: category.name,
+            }
+
+            this.categories.push(newCategory)
+          }
+        } else {
+          this.categories.push(category)
+        }
+      }
+
+      let includeRecent = this.include && this.include.length ? this.include.indexOf('recent') > -1 : true
+      let excludeRecent = this.exclude && this.exclude.length ? this.exclude.indexOf('recent') > -1 : false
+      if (includeRecent && !excludeRecent) {
+        this.hideRecent = false
+        this.categories.unshift(RECENT_CATEGORY)
+      }
+
+      if (this.categories[0]) {
+        this.categories[0].first = true
+      }
+      this.categories.unshift(SEARCH_CATEGORY)
+    },
     testStickyPosition() {
       var stickyTestElement = document.createElement('div')
       for (let prefix of ['', '-webkit-', '-ms-', '-moz-', '-o-']) {
@@ -394,7 +411,7 @@ export default {
     }
   },
   render() {
-    var { perLine, emojiSize, skin, set, sheetSize, styles, title, emoji, color, native, backgroundImageFn, emojisToShowFilter, include, exclude, autoFocus } = this,
+    var { perLine, emojiSize, skin, set, sheetSize, styles, title, emoji, color, native, backgroundImageFn, emojisToShowFilter, include, exclude, autoFocus, enableSkins } = this,
         width = (perLine * (emojiSize + 12)) + 12 + 2 + measureScrollbar()
 
     return <div style={{width: width, ...styles}} class='emoji-mart'>
@@ -451,6 +468,7 @@ export default {
           ref='preview'
           title={title}
           emoji={emoji}
+          enableSkins={enableSkins}
           emojiProps={{
             native: native,
             size: 38,

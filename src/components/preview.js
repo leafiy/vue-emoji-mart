@@ -23,13 +23,17 @@ export default {
     skinsProps: {
       type: Object,
       required: true
+    },
+    enableSkins: {
+      type: Boolean,
+      required: true
     }
   },
   data () {
     return { emojiObj: null }
   },
   render(h) {
-    var { emojiObj, emojiProps, skinsProps, title, emoji } = this
+    var { emojiObj, emojiProps, skinsProps, title, emoji, enableSkins } = this
 
     if (emojiObj) {
       var emojiData = getData(emojiObj),
@@ -78,9 +82,9 @@ export default {
         </div>
 
         <div class='emoji-mart-preview-skins'>
-          <Skins
+          {enableSkins && <Skins
             {...{ props: skinsProps }}
-          />
+          />}
         </div>
       </div>
     }

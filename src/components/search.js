@@ -9,6 +9,9 @@ export default {
         return (() => {})
       }
     },
+    include: Array,
+    exclude: Array,
+    custom: Array,
     maxResults: 75,
     emojisToShowFilter: null,
     i18n: Object,
