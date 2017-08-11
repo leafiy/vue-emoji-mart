@@ -71,16 +71,18 @@ function getData(emoji, skin, set) {
       emojiData = data.emojis[emoji]
     }
   } else if (emoji.custom) {
-    emojiData = emoji
+    let tmp = {}
 
-    emojiData.search = buildSearch({
+    tmp.search = buildSearch({
       short_names: emoji.short_names,
       name: emoji.name,
       keywords: emoji.keywords,
       emoticons: emoji.emoticons
     })
 
-    emojiData.search = emojiData.search.join(',')
+    tmp.search = tmp.search.join(',')
+    emojiData = emoji
+    emojiData.search = tmp.search
   } else if (emoji.id) {
     if (data.short_names.hasOwnProperty(emoji.id)) {
       emoji.id = data.short_names[emoji.id]

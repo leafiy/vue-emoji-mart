@@ -45,72 +45,7 @@ const _handleLeave = (e, props) => {
   emojiLeave(emoji, e)
 }
 
-const Emoji = (props, h) => {
-  for (let k in Emoji.defaultProps) {
-    if (props[k] == undefined && Emoji.defaultProps[k] != undefined) {
-      props[k] = Emoji.defaultProps[k]
-    }
-  }
-
-  var { unified, custom, imageUrl } = _getData(props),
-      style = {},
-      children = props.children
-
-  if (!unified && !custom) {
-    return null
-  }
-
-  if (props.native && unified) {
-    style = { fontSize: props.size }
-    children = unifiedToNative(unified)
-
-    if (props.forceSize) {
-      style.display = 'inline-block'
-      style.width = props.size
-      style.height = props.size
-    }
-  } else if (custom) {
-    style = {
-      width: props.size,
-      height: props.size,
-      display: 'inline-block',
-      backgroundImage: `url(${imageUrl})`,
-      backgroundSize: '100%',
-    }
-  } else {
-    let setHasEmoji = _getData(props)[`has_img_${props.set}`]
-
-    if (!setHasEmoji) {
-      return null
-    }
-
-    style = {
-      width: props.size,
-      height: props.size,
-      display: 'inline-block',
-      backgroundImage: `url(${props.backgroundImageFn(props.set, props.sheetSize)})`,
-      backgroundSize: `${100 * SHEET_COLUMNS}%`,
-      backgroundPosition: _getPosition(props),
-    }
-  }
-
-  return h('span', {
-    key: props.emoji.id || props.emoji,
-    class: 'emoji-mart-emoji',
-    on: {
-      click: (e) => _handleClick(e, props),
-      mouseenter: (e) => _handleOver(e, props),
-      mouseleave: (e) => _handleLeave(e, props)
-    }
-  },
-  [
-    h('span', {
-      style: style
-    }, children)
-  ])
-}
-
-Emoji.defaultProps = {
+const defaultProps = {
   skin: 1,
   set: 'apple',
   sheetSize: 64,
@@ -121,5 +56,114 @@ Emoji.defaultProps = {
   onLeave: (() => {}),
   onClick: (() => {}),
 }
+
+const Emoji = {
+  name: 'Emoji',
+  props: {
+    size: Number,
+    emoji: Object|String,
+    skin: {
+      type: Number,
+      default: defaultProps.skin
+    },
+    set: {
+      type: String,
+      default: defaultProps.set
+    },
+    sheetSize: {
+      type: Number,
+      default: defaultProps.sheetSize
+    },
+    native: {
+      type: Boolean,
+      default: defaultProps.native
+    },
+    forceSize: {
+      type: Boolean,
+      default: defaultProps.forceSize
+    },
+    backgroundImageFn: {
+      type: Function,
+      default() {
+        return defaultProps.backgroundImageFn
+      }
+    },
+    emojiOver: {
+      type: Function,
+      default() {
+        return defaultProps.emojiOver
+      }
+    },
+    emojiLeave: {
+      type: Function,
+      default() {
+        return defaultProps.emojiLeave
+      }
+    },
+    emojiClick: {
+      type: Function,
+      default() {
+        return defaultProps.emojiClick
+      }
+    }
+  },
+  data() {
+    return {}
+  },
+  render() {
+    const {emoji} = this
+    var { unified, custom, imageUrl } = _getData(this),
+        style = {},
+        children = this.children
+
+    if (!unified && !custom) {
+      return null
+    }
+
+    if (this.native && unified) {
+      style = { fontSize: this.size }
+      children = unifiedToNative(unified)
+
+      if (this.forceSize) {
+        style.display = 'inline-block'
+        style.width = this.size
+        style.height = this.size
+      }
+    } else if (custom) {
+      style = {
+        width: this.size,
+        height: this.size,
+        display: 'inline-block',
+        backgroundImage: `url(${imageUrl})`,
+        backgroundSize: '100%',
+      }
+    } else {
+      let setHasEmoji = _getData(this)[`has_img_${this.set}`]
+
+      if (!setHasEmoji) {
+        return null
+      }
+
+      style = {
+        width: this.size,
+        height: this.size,
+        display: 'inline-block',
+        backgroundImage: `url(${this.backgroundImageFn(this.set, this.sheetSize)})`,
+        backgroundSize: `${100 * SHEET_COLUMNS}%`,
+        backgroundPosition: _getPosition(this),
+      }
+    }
+    return <span
+      key={emoji.id || emoji}
+      onClick={(e) => _handleClick(e, this)}
+      onMouseenter={(e) => _handleOver(e, this)}
+      onMouseleave={(e) => _handleLeave(e, this)}
+      class='emoji-mart-emoji'>
+      <span style={style}>{children}</span>
+    </span>
+  }
+}
+
+Emoji.defaultProps = defaultProps
 
 export default Emoji

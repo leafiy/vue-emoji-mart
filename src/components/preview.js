@@ -29,7 +29,6 @@ export default {
     return { emojiObj: null }
   },
   render(h) {
-    // FIXME: Custom emoji case infinite update loop
     var { emojiObj, emojiProps, skinsProps, title, emoji } = this
 
     if (emojiObj) {
@@ -47,11 +46,7 @@ export default {
 
       return <div class='emoji-mart-preview'>
         <div class='emoji-mart-preview-emoji'>
-          {Emoji({
-            key: emojiObj.id,
-            emoji: emojiObj,
-            ...emojiProps,
-          }, h)}
+          <Emoji key={emojiObj.id} emoji={emojiObj} {...{ props: emojiProps }} />
         </div>
 
         <div class='emoji-mart-preview-data'>
@@ -71,10 +66,9 @@ export default {
     } else {
       return <div class='emoji-mart-preview'>
         <div class='emoji-mart-preview-emoji'>
-          {emoji && emoji.length && Emoji({
-            emoji: emoji,
-            ...emojiProps,
-          }, h)}
+          {
+            emoji && emoji.length && <Emoji emoji={emoji} {...{ props: emojiProps }} />
+          }
         </div>
 
         <div class='emoji-mart-preview-data'>
@@ -85,8 +79,7 @@ export default {
 
         <div class='emoji-mart-preview-skins'>
           <Skins
-            skin={skinsProps.skin}
-            change={skinsProps.change}
+            {...{ props: skinsProps }}
           />
         </div>
       </div>

@@ -134,23 +134,13 @@ export default {
       </div>
 
       {emojis && emojis.map((emoji) =>
-        Emoji({
-          emoji: emoji,
-          ...emojiProps
-        }, h)
+        <Emoji emoji={emoji} {...{ props: emojiProps }} />
       )}
 
       {emojis && !emojis.length &&
         <div>
           <div>
-          {Emoji({
-            ...emojiProps,
-            size: 38,
-            emoji: 'sleuth_or_spy',
-            onOver: null,
-            onLeave: null,
-            onClick: null,
-          }, h)}
+            <Emoji size={38} emoji={'sleuth_or_spy'} {...{ props: emojiProps }} />
           </div>
 
           <div class='emoji-mart-no-results-label'>
