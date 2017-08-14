@@ -50,7 +50,7 @@ function getSanitizedData() {
 }
 
 function getData(emoji, skin, set) {
-  var data = store.get('data')
+  var data = window.emojiJSON
   var emojiData = {}
 
   if (typeof emoji == 'string') {
@@ -166,9 +166,11 @@ function loadEmojiData() {
       .then( r => r.json() )
       .then( data => {
         store.set('data', data)
+        window.emojiJSON = data
         return data
       })
   } else {
+    window.emojiJSON = data
     return new Promise((resolve, reject) => {
       resolve(data)
     })

@@ -14,7 +14,7 @@ var isInited = false
 function init(){
   if (isInited) return
   isInited = true
-  data = store.get('data')
+  data = window.emojiJSON
   for (let emoji in data.emojis) {
     let emojiData = data.emojis[emoji],
         { short_names, emoticons } = emojiData,

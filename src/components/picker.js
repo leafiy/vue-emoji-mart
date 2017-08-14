@@ -123,17 +123,17 @@ export default {
   },
   data () {
     this.i18n = deepMerge(I18N, this.i18ns)
-    this.data = {}
+    this.categories = []
     return {
-      categories: [],
+      loading: true,
       skin: store.get('skin') || this.skins,
       firstRender: true
     }
   },
   mounted () {
     loadEmojiData().then((data) => {
-      this.data = data
-      this.processData()
+      this.processData(data)
+      this.loading = false
       if (this.firstRender) {
         this.testStickyPosition()
         this.firstRenderTimeout = setTimeout(() => {
@@ -157,8 +157,7 @@ export default {
     clearTimeout(this.firstRenderTimeout)
   },
   methods: {
-    processData() {
-      const { data } = this
+    processData(data) {
       this.categories = []
       let allCategories = [].concat(data.categories)
 
@@ -414,7 +413,7 @@ export default {
     }
   },
   render() {
-    if (!this.categories || this.categories.length === 0) {
+    if (this.loading) {
       return <span>loading...</span>
     }
 
@@ -423,13 +422,13 @@ export default {
 
     return <div style={{width: width, ...styles}} class='emoji-mart'>
       <div class='emoji-mart-bar'>
-        {<Anchors
+        <Anchors
           ref='anchors'
           i18n={this.i18n}
           color={color}
           categories={this.categories}
           anchorClick={this.handleAnchorClick.bind(this)}
-        />}
+        />
       </div>
 
       <Search
@@ -471,7 +470,7 @@ export default {
       </div>
 
       <div class='emoji-mart-bar'>
-        {emoji && <Preview
+        {<Preview
           ref='preview'
           title={title}
           emoji={emoji}
