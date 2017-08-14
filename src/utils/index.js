@@ -162,13 +162,12 @@ function deepMerge(a, b) {
 function loadEmojiData() {
   let data = store.get('data')
   if (!data) {
-    return fetch('../data/emoji.json')
-      .then( r => r.json() )
-      .then( data => {
-        store.set('data', data)
-        window.emojiJSON = data
-        return data
-      })
+    return import('../../data').then((res) => {
+      var data = res.default
+      store.set('data', data)
+      window.emojiJSON = data
+      return data
+    })
   } else {
     window.emojiJSON = data
     return new Promise((resolve, reject) => {

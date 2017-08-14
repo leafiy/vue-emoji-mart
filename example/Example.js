@@ -1,4 +1,5 @@
 import { Picker } from '../src'
+// import { Picker } from '../dist/vue-emoji-mart'
 
 const CUSTOM_EMOJIS = [
   {
@@ -30,6 +31,7 @@ const CATEGORIES = [
 export default {
   data () {
     return {
+      url: 'http://nres.ffan.com/newactivity/vue-emoji-mart/data/emoji.json',
       emojiSize: 24,
       perLine: 9,
       skin: 1,
@@ -51,6 +53,7 @@ export default {
 
       {!this.hidden &&
         <Picker
+          dataUrl={this.url}
           emojiSize={this.emojiSize}
           perLine={this.perLine}
           skins={this.skin}

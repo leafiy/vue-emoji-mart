@@ -19,8 +19,7 @@
   },
   "homepage": "https://github.com/missive/emoji-mart",
   "dependencies": {
-    "measure-scrollbar": "^0.1.0",
-    "unfetch": "^3.0.0"
+    "measure-scrollbar": "^0.1.0"
   },
   "peerDependencies": {
     "vue": "^2.4.0"

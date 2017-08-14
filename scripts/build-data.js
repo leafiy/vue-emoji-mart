@@ -1,4 +1,5 @@
 var fs = require('fs'),
+    path = require('path'),
     emojiData = require('emoji-datasource'),
     emojiLib = require('emojilib'),
     inflection = require('inflection'),
@@ -110,9 +111,6 @@ mkdirp('data', (err) => {
 
   const stringifiedData = JSON.stringify(data).replace(/\"([A-Za-z_]+)\":/g, '$1:')
   fs.writeFile('data/index.js', `export default ${stringifiedData}`, (err) => {
-    if (err) throw err
-  })
-  fs.writeFile('data/emoji.json', JSON.stringify(data), (err) => {
     if (err) throw err
   })
 })

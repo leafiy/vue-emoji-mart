@@ -33,6 +33,9 @@ const I18N = {
 export default {
   name: 'Picker',
   props: {
+    dataUrl: {
+      type: String
+    },
     onItemClick: {
       type: Function,
       default() {
