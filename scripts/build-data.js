@@ -113,4 +113,7 @@ mkdirp('data', (err) => {
   fs.writeFile('data/index.js', `export default ${stringifiedData}`, (err) => {
     if (err) throw err
   })
+  fs.writeFile('data/emoji.json', JSON.stringify(data), (err) => {
+    if (err) throw err
+  })
 })

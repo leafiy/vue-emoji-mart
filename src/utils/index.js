@@ -159,11 +159,12 @@ function deepMerge(a, b) {
   return o
 }
 
-function loadEmojiData() {
+function loadEmojiData(url) {
   let data = store.get('data')
   if (!data) {
-    return import('../../data').then((res) => {
-      var data = res.default
+    return fetch(url)
+    .then( r => r.json() )
+    .then( data => {
       store.set('data', data)
       window.emojiJSON = data
       return data

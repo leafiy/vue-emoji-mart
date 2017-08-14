@@ -134,7 +134,7 @@ export default {
     }
   },
   mounted () {
-    loadEmojiData().then((data) => {
+    loadEmojiData(this.dataUrl).then((data) => {
       this.processData(data)
       this.loading = false
       if (this.firstRender) {

@@ -1,20 +1,5 @@
-import { Picker } from '../src'
-// import { Picker } from '../dist/vue-emoji-mart'
-
-const CUSTOM_EMOJIS = [
-  {
-    name: 'Octocat',
-    short_names: ['octocat'],
-    keywords: ['github'],
-    imageUrl: 'https://assets-cdn.github.com/images/icons/emoji/octocat.png?v7'
-  },
-  {
-    name: 'Squirrel',
-    short_names: ['shipit', 'squirrel'],
-    keywords: ['github'],
-    imageUrl: 'https://assets-cdn.github.com/images/icons/emoji/shipit.png?v7'
-  }
-]
+// import { Picker } from '../src'
+import { Picker } from '../dist/vue-emoji-mart'
 
 const CATEGORIES = [
   'recent',
@@ -31,7 +16,7 @@ const CATEGORIES = [
 export default {
   data () {
     return {
-      url: 'http://nres.ffan.com/newactivity/vue-emoji-mart/data/emoji.json',
+      dataUrl: './emoji.json',
       emojiSize: 24,
       perLine: 9,
       skin: 1,
@@ -53,7 +38,7 @@ export default {
 
       {!this.hidden &&
         <Picker
-          dataUrl={this.url}
+          dataUrl={this.dataUrl}
           emojiSize={this.emojiSize}
           perLine={this.perLine}
           skins={this.skin}
