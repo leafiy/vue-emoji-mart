@@ -1,6 +1,6 @@
 const extend = require('util')._extend
+import store from './store'
 
-import data from '../../data'
 import { getData, getSanitizedData, intersect } from '.'
 
 var index = {}
@@ -8,22 +8,30 @@ var emojisList = {}
 var emoticonsList = {}
 var previousInclude = []
 var previousExclude = []
+var data
+var isInited = false
 
-for (let emoji in data.emojis) {
-  let emojiData = data.emojis[emoji],
-      { short_names, emoticons } = emojiData,
-      id = short_names[0]
+function init(){
+  if (isInited) return
+  isInited = true
+  data = store.get('data')
+  for (let emoji in data.emojis) {
+    let emojiData = data.emojis[emoji],
+        { short_names, emoticons } = emojiData,
+        id = short_names[0]
 
-  for (let emoticon of (emoticons || [])) {
-    if (!emoticonsList[emoticon]) {
-      emoticonsList[emoticon] = id
+    for (let emoticon of (emoticons || [])) {
+      if (!emoticonsList[emoticon]) {
+        emoticonsList[emoticon] = id
+      }
     }
-  }
 
-  emojisList[id] = getSanitizedData(id)
+    emojisList[id] = getSanitizedData(id)
+  }
 }
 
 function search(value, { emojisToShowFilter, maxResults, include, exclude, custom = [] } = {}) {
+  init()
   maxResults || (maxResults = 75)
   include || (include = [])
   exclude || (exclude = [])

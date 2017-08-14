@@ -1,7 +1,5 @@
 import buildSearch from './build-search'
-import data from '../../data'
 import store from './store'
-import fetch from 'unfetch'
 
 const COLONS_REGEX = /^(?:\:([^\:]+)\:)(?:\:skin-tone-(\d)\:)?$/
 const SKINS = [
@@ -52,6 +50,7 @@ function getSanitizedData() {
 }
 
 function getData(emoji, skin, set) {
+  var data = store.get('data')
   var emojiData = {}
 
   if (typeof emoji == 'string') {
@@ -160,17 +159,20 @@ function deepMerge(a, b) {
   return o
 }
 
-async function loadEmojiData() {
+function loadEmojiData() {
   let data = store.get('data')
   if (!data) {
-    data = await fetch('../data/emoji.json')
+    return fetch('../data/emoji.json')
       .then( r => r.json() )
       .then( data => {
         store.set('data', data)
         return data
       })
+  } else {
+    return new Promise((resolve, reject) => {
+      resolve(data)
+    })
   }
-  return data
 }
 
 export { getData, getSanitizedData, intersect, deepMerge, unifiedToNative, loadEmojiData }

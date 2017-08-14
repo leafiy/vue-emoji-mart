@@ -1,4 +1,4 @@
-import { Picker, Emoji } from '../src'
+import { Picker } from '../src'
 
 const CUSTOM_EMOJIS = [
   {
@@ -25,7 +25,6 @@ const CATEGORIES = [
   'objects',
   'symbols',
   'flags',
-  'custom',
 ]
 
 export default {
@@ -57,7 +56,6 @@ export default {
           skins={this.skin}
           native={this.native}
           set={this.set}
-          custom={CUSTOM_EMOJIS}
           autoFocus={this.autoFocus}
           include={this.include}
           exclude={this.exclude}

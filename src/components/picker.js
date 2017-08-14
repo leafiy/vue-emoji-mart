@@ -1,7 +1,6 @@
 import '../vendor/raf-polyfill'
 
 import measureScrollbar from 'measure-scrollbar'
-import data from '../../data'
 
 import store from '../utils/store'
 import frequently from '../utils/frequently'
@@ -123,22 +122,25 @@ export default {
     }
   },
   data () {
+    this.i18n = deepMerge(I18N, this.i18ns)
+    this.data = {}
     return {
+      categories: [],
       skin: store.get('skin') || this.skins,
       firstRender: true
     }
   },
-  created () {
-    this.i18n = deepMerge(I18N, this.i18ns)
-    this.processData()
-  },
   mounted () {
-    if (this.firstRender) {
-      this.testStickyPosition()
-      this.firstRenderTimeout = setTimeout(() => {
-        this.firstRender = false
-      }, 60)
-    }
+    loadEmojiData().then((data) => {
+      this.data = data
+      this.processData()
+      if (this.firstRender) {
+        this.testStickyPosition()
+        this.firstRenderTimeout = setTimeout(() => {
+          this.firstRender = false
+        }, 60)
+      }
+    })
   },
   watch: {
     'firstRender': function(val, oldVal) {
@@ -156,6 +158,7 @@ export default {
   },
   methods: {
     processData() {
+      const { data } = this
       this.categories = []
       let allCategories = [].concat(data.categories)
 
@@ -411,18 +414,22 @@ export default {
     }
   },
   render() {
+    if (!this.categories || this.categories.length === 0) {
+      return <span>loading...</span>
+    }
+
     var { perLine, emojiSize, skin, set, sheetSize, styles, title, emoji, color, native, backgroundImageFn, emojisToShowFilter, include, exclude, autoFocus, enableSkins } = this,
         width = (perLine * (emojiSize + 12)) + 12 + 2 + measureScrollbar()
 
     return <div style={{width: width, ...styles}} class='emoji-mart'>
       <div class='emoji-mart-bar'>
-        <Anchors
+        {<Anchors
           ref='anchors'
           i18n={this.i18n}
           color={color}
           categories={this.categories}
           anchorClick={this.handleAnchorClick.bind(this)}
-        />
+        />}
       </div>
 
       <Search
@@ -464,7 +471,7 @@ export default {
       </div>
 
       <div class='emoji-mart-bar'>
-        <Preview
+        {emoji && <Preview
           ref='preview'
           title={title}
           emoji={emoji}
@@ -481,7 +488,7 @@ export default {
             skin: skin,
             change: this.handleSkinChange.bind(this)
           }}
-        />
+        />}
       </div>
     </div>
   }
