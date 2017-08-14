@@ -119,18 +119,18 @@ const Emoji = {
     }
 
     if (this.native && unified) {
-      style = { fontSize: this.size }
+      style = { fontSize: this.size + 'px' }
       children = unifiedToNative(unified)
 
       if (this.forceSize) {
         style.display = 'inline-block'
-        style.width = this.size
-        style.height = this.size
+        style.width = this.size + 'px'
+        style.height = this.size + 'px'
       }
     } else if (custom) {
       style = {
-        width: this.size,
-        height: this.size,
+        width: this.size + 'px',
+        height: this.size + 'px',
         display: 'inline-block',
         backgroundImage: `url(${imageUrl})`,
         backgroundSize: '100%',
@@ -143,8 +143,8 @@ const Emoji = {
       }
 
       style = {
-        width: this.size,
-        height: this.size,
+        width: this.size + 'px',
+        height: this.size + 'px',
         display: 'inline-block',
         backgroundImage: `url(${this.backgroundImageFn(this.set, this.sheetSize)})`,
         backgroundSize: `${100 * SHEET_COLUMNS}%`,
