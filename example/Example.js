@@ -6,6 +6,7 @@ export default {
     Picker
   },
   template: `
+  <div class="dash">
     <Picker
       :dataUrl="dataUrl"
       :emoji-size="emojiSize"
@@ -18,6 +19,7 @@ export default {
       :exclude="exclude"
       :onItemClick="insertSymbol"
     />
+  </div>
   `,
   data () {
     return {
