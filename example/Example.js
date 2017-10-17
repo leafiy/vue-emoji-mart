@@ -1,4 +1,5 @@
 import { Picker } from '../src'
+// import { Picker } from '../dist/vue-emoji-mart'
 
 export default {
   components: {
