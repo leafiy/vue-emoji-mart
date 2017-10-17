@@ -34,7 +34,8 @@ export default {
   name: 'Picker',
   props: {
     dataUrl: {
-      type: String
+      type: String,
+      default: 'https://unpkg.com/vue-emoji-mart/data/emoji.json'
     },
     onItemClick: {
       type: Function,

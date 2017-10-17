@@ -1,5 +1,4 @@
-// import { Picker } from '../src'
-import { Picker } from '../dist/vue-emoji-mart'
+import { Picker } from '../src'
 
 export default {
   components: {
@@ -8,7 +7,6 @@ export default {
   template: `
   <div class="dash">
     <Picker
-      :dataUrl="dataUrl"
       :emoji-size="emojiSize"
       :per-line="perLine"
       :skins="skin"
