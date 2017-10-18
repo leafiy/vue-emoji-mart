@@ -12,14 +12,48 @@
 
 ## Components
 ### Picker
-```jsx
+```html
+<template>
+  <div>
+    <Picker
+      :emoji-size="emojiSize"
+      :per-line="perLine"
+      :skins="skin"
+      :native="native"
+      :set="set"
+      :auto-focus="autoFocus"
+      :include="include"
+      :exclude="exclude"
+      :onItemClick="insertSymbol"
+    />
+  </div>
+</template>
+<script>
+import 'vue-emoji-mart/css/emoji-mart.css'
 import { Picker } from 'vue-emoji-mart'
 
-<Picker set='emojione' />
-<Picker onClick={this.addEmoji} />
-<Picker title='Pick your emoji…' emoji='point_up' />
-<Picker style={{ position: 'absolute', bottom: '20px', right: '20px' }} />
-<Picker i18n={{ search: 'Recherche', categories: { search: 'Résultats de recherche', recent: 'Récents' } }} />
+export default {
+  data () {
+    return {
+      emojiSize: 24,
+      perLine: 9,
+      skin: 1,
+      native: true,
+      set: 'apple',
+      hidden: false,
+      currentEmoji: { id: '+1' },
+      autoFocus: false,
+      include: [],
+      exclude: [],
+    }
+  },
+  methods: {
+    insertSymbol (emoji) {
+      console.log(emoji)
+    }
+  }
+}
+</script>
 ```
 
 | Prop | Required | Default | Description |
