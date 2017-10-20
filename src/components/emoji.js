@@ -50,9 +50,9 @@ const defaultProps = {
   native: false,
   forceSize: false,
   backgroundImageFn: ((set, sheetSize) => `https://unpkg.com/emoji-datasource-${set}@${EMOJI_DATASOURCE_VERSION}/img/${set}/sheets/${sheetSize}.png`),
-  onOver: (() => {}),
-  onLeave: (() => {}),
-  onClick: (() => {}),
+  emojiOver: (() => {}),
+  emojiLeave: (() => {}),
+  emojiClick: (() => {}),
 }
 
 const Emoji = {
@@ -81,25 +81,20 @@ const Emoji = {
       default: defaultProps.forceSize
     },
     backgroundImageFn: {
-      type: Function
+      type: Function,
+      default: defaultProps.backgroundImageFn
     },
     emojiOver: {
       type: Function,
-      default() {
-        return defaultProps.emojiOver
-      }
+      default: defaultProps.emojiOver
     },
     emojiLeave: {
       type: Function,
-      default() {
-        return defaultProps.emojiLeave
-      }
+      default: defaultProps.emojiLeave
     },
     emojiClick: {
       type: Function,
-      default() {
-        return defaultProps.emojiClick
-      }
+      default: defaultProps.emojiClick
     }
   },
   data() {

@@ -27,7 +27,7 @@ export default {
       emojiSize: 24,
       perLine: 9,
       skin: 1,
-      native: false,
+      native: true,
       set: 'apple',
       hidden: false,
       currentEmoji: { id: '+1' },
