@@ -39,6 +39,7 @@ module.exports = {
 
   plugins: [
     new webpack.DefinePlugin({
+      VUE_EMOJI_MART_VERSION: `'${pack.version}'`,
       EMOJI_DATASOURCE_VERSION: `'${pack.devDependencies['emoji-datasource']}'`,
     }),
   ],

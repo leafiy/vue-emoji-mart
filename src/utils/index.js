@@ -160,12 +160,15 @@ function deepMerge(a, b) {
 }
 
 function loadEmojiData(url) {
+  let version = VUE_EMOJI_MART_VERSION
+  let cacheVersion = store.get('version')
   let data = store.get('data')
-  if (!data) {
+  if (!data || version !== cacheVersion) {
     return fetch(url)
     .then( r => r.json() )
     .then( data => {
       store.set('data', data)
+      store.set('version', version)
       window.emojiJSON = data
       return data
     })
