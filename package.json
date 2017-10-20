@@ -1,6 +1,6 @@
 {
   "name": "vue-emoji-mart",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Customizable Slack-like emoji picker for Vue. Port from emoji-mart for React by Etienne Lemay.",
   "main": "dist/vue-emoji-mart.js",
   "repository": {
