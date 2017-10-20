@@ -81,10 +81,7 @@ const Emoji = {
       default: defaultProps.forceSize
     },
     backgroundImageFn: {
-      type: Function,
-      default() {
-        return defaultProps.backgroundImageFn
-      }
+      type: Function
     },
     emojiOver: {
       type: Function,

@@ -88,8 +88,8 @@ emojiData.filter((datum) => {
   // Really big.
   delete datum.skin_variations
   // Not needed for native emoji.
-  delete datum.sheet_x
-  delete datum.sheet_y
+  // delete datum.sheet_x
+  // delete datum.sheet_y
 
   for (let key in datum) {
     let value = datum[key]
@@ -97,9 +97,9 @@ emojiData.filter((datum) => {
     if (Array.isArray(value) && !value.length) {
       delete datum[key]
     }
-    if (key.startsWith('has_img')) {
-      delete datum[key]
-    }
+    // if (key.startsWith('has_img')) {
+    //   delete datum[key]
+    // }
   }
 })
 

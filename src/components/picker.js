@@ -89,9 +89,7 @@ export default {
     },
     backgroundImageFn: {
       type: Function,
-      default() {
-        return Emoji.defaultProps.backgroundImageFn
-      }
+      default: Emoji.defaultProps.backgroundImageFn
     },
     sheetSize: {
       type: Number,

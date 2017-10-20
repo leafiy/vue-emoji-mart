@@ -52,6 +52,7 @@
     "build:dist": "node scripts/build-dist",
     "build": "npm run build:data && npm run build:example && npm run build:dist",
     "dev": "webpack-dev-server --config ./example/webpack.config.js --inline --hot",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "deploy": "npm version patch && npm run build && npm publish"
   }
 }

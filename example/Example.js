@@ -8,6 +8,7 @@ export default {
   template: `
   <div class="dash">
     <Picker
+      :data-url="dataUrl"
       :emoji-size="emojiSize"
       :per-line="perLine"
       :skins="skin"
@@ -22,11 +23,11 @@ export default {
   `,
   data () {
     return {
-      dataUrl: './emoji.json',
+      dataUrl: '../data/emoji.json',
       emojiSize: 24,
       perLine: 9,
       skin: 1,
-      native: true,
+      native: false,
       set: 'apple',
       hidden: false,
       currentEmoji: { id: '+1' },
