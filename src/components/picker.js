@@ -243,15 +243,15 @@ export default {
       var { preview } = this.$refs
       // Use Array.prototype.find() when it is more widely supported.
       const emojiData = CUSTOM_CATEGORY.emojis.filter(customEmoji => customEmoji.id === emoji.id)[0]
-      preview.emojiObj = Object.assign(emoji, emojiData)
+      // preview.emojiObj = Object.assign(emoji, emojiData)
       clearTimeout(this.leaveTimeout)
     },
 
     handleEmojiLeave(emoji) {
-      this.leaveTimeout = setTimeout(() => {
-        var { preview } = this.$refs
-        preview.emojiObj = null
-      }, 16)
+      // this.leaveTimeout = setTimeout(() => {
+      //   var { preview } = this.$refs
+      //   preview.emojiObj = null
+      // }, 16)
     },
 
     handleEmojiClick(emoji, e) {

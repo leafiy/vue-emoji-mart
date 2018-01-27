@@ -1333,20 +1333,17 @@ var I18N = {
       var emojiData = CUSTOM_CATEGORY.emojis.filter(function (customEmoji) {
         return customEmoji.id === emoji.id;
       })[0];
-      preview.emojiObj = Object.assign(emoji, emojiData);
+      // preview.emojiObj = Object.assign(emoji, emojiData)
       clearTimeout(this.leaveTimeout);
     },
     handleEmojiLeave: function handleEmojiLeave(emoji) {
-      var _this3 = this;
-
-      this.leaveTimeout = setTimeout(function () {
-        var preview = _this3.$refs.preview;
-
-        preview.emojiObj = null;
-      }, 16);
+      // this.leaveTimeout = setTimeout(() => {
+      //   var { preview } = this.$refs
+      //   preview.emojiObj = null
+      // }, 16)
     },
     handleEmojiClick: function handleEmojiClick(emoji, e) {
-      var _this4 = this;
+      var _this3 = this;
 
       this.onItemClick(emoji, e);
       if (!this.hideRecent) __WEBPACK_IMPORTED_MODULE_3__utils_frequently__["a" /* default */].add(emoji);
@@ -1360,8 +1357,8 @@ var I18N = {
           component.memoizeSize();
           if (maxMargin == component.maxMargin) return;
 
-          _this4.updateCategoriesSize();
-          _this4.handleScrollPaint();
+          _this3.updateCategoriesSize();
+          _this3.handleScrollPaint();
 
           if (SEARCH_CATEGORY.emojis) {
             component.updateDisplay('none');
@@ -1531,7 +1528,7 @@ var I18N = {
     }
   },
   render: function render() {
-    var _this5 = this;
+    var _this4 = this;
 
     var h = arguments[0];
 
@@ -1610,8 +1607,8 @@ var I18N = {
                 emojis: category.emojis,
                 perLine: perLine,
                 native: native,
-                hasStickyPosition: _this5.hasStickyPosition,
-                i18n: _this5.i18n,
+                hasStickyPosition: _this4.hasStickyPosition,
+                i18n: _this4.i18n,
                 custom: category.name == 'Recent' ? CUSTOM_CATEGORY.emojis : undefined,
                 emojiProps: {
                   native: native,
@@ -1621,9 +1618,9 @@ var I18N = {
                   sheetSize: sheetSize,
                   forceSize: native,
                   backgroundImageFn: backgroundImageFn,
-                  emojiOver: _this5.handleEmojiOver.bind(_this5),
-                  emojiLeave: _this5.handleEmojiLeave.bind(_this5),
-                  emojiClick: _this5.handleEmojiClick.bind(_this5)
+                  emojiOver: _this4.handleEmojiOver.bind(_this4),
+                  emojiLeave: _this4.handleEmojiLeave.bind(_this4),
+                  emojiClick: _this4.handleEmojiClick.bind(_this4)
                 }
               }
             },
