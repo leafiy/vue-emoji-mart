@@ -5,7 +5,7 @@
   "main": "dist/vue-emoji-mart.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:fireyy/vue-emoji-mart.git"
+    "url": "git@github.com:leafiy/vue-emoji-mart.git"
   },
   "keywords": [
     "vue",
