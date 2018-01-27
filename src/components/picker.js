@@ -470,27 +470,6 @@ export default {
           />
         })}
       </div>
-
-      <div class='emoji-mart-bar'>
-        {<Preview
-          ref='preview'
-          title={title}
-          emoji={emoji}
-          enableSkins={enableSkins}
-          emojiProps={{
-            native: native,
-            size: 38,
-            skin: skin,
-            set: set,
-            sheetSize: sheetSize,
-            backgroundImageFn: backgroundImageFn,
-          }}
-          skinsProps={{
-            skin: skin,
-            change: this.handleSkinChange.bind(this)
-          }}
-        />}
-      </div>
     </div>
   }
 }
